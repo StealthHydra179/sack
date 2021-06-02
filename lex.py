@@ -37,6 +37,7 @@ class Lexer:
 
     # Return the next token.
     def getToken(self):
+        self.skipWhitespace()
         token = None
 
         # Check the first character of this token to see if we can decide what it is.
@@ -53,6 +54,37 @@ class Lexer:
             token = Token(self.curChar, TokenType.NEWLINE)
         elif self.curChar == '\0':
             token = Token('', TokenType.EOF)
+        elif self.curChar == '=':
+            # Check whether this token is = or ==
+            if self.peek() == '=':
+                lastChar = self.curChar
+                self.nextChar()
+                token = Token(lastChar + self.curChar, TokenType.EQEQ)
+            else:
+                token = Token(self.curChar, TokenType.EQ)
+        elif self.curChar == '>':
+            # Check whether this is token is > or >=
+            if self.peek() == '=':
+                lastChar = self.curChar
+                self.nextChar()
+                token = Token(lastChar + self.curChar, TokenType.GTEQ)
+            else:
+                token = Token(self.curChar, TokenType.GT)
+        elif self.curChar == '<':
+                # Check whether this is token is < or <=
+                if self.peek() == '=':
+                    lastChar = self.curChar
+                    self.nextChar()
+                    token = Token(lastChar + self.curChar, TokenType.LTEQ)
+                else:
+                    token = Token(self.curChar, TokenType.LT)
+        elif self.curChar == '!':
+            if self.peek() == '=':
+                lastChar = self.curChar
+                self.nextChar()
+                token = Token(lastChar + self.curChar, TokenType.NOTEQ)
+            else:
+                self.abort("Expected !=, got !" + self.peek())
         else:
             # Unknown token!
             self.abort("Unknown token: " + self.curChar)
