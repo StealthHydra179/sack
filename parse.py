@@ -141,18 +141,16 @@ class Parser:
         # "LET" ident = expression
         elif self.checkToken(TokenType.LET):
             self.nextToken()
-
-            #  Check if ident exists in symbol table. If not, declare it.
+            
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.emitter.headerLine("float " + self.curToken.text + ";")
 
             self.emitter.emit(self.curToken.text + " = ")
             self.match(TokenType.IDENT)
             self.match(TokenType.EQ)
             
             self.expression()
-            self.emitter.emitLine(";")
+            self.emitter.emit("\n")
 
         # "INPUT" ident
         elif self.checkToken(TokenType.INPUT):

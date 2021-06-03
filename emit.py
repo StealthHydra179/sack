@@ -12,7 +12,8 @@ class Emitter:
         self.code += code + '\n'
 
     def headerLine(self, code):
-        self.header += code + '\n'
+        #self.header += code + '\n'
+        pass
 
     def writeFile(self):
         with open(self.fullPath, 'w') as outputFile:
