@@ -162,10 +162,6 @@ class Parser:
 
             # Emit scanf but also validate the input. If invalid, set the variable to 0 and clear the input.
             self.emitter.emitLine(self.curToken.text + " = input()")
-            self.emitter.emitLine(self.curToken.text + " = 0;")
-            self.emitter.emit("scanf(\"%")
-            self.emitter.emitLine("*s\");")
-            self.emitter.emitLine("}")
             self.match(TokenType.IDENT)
 
         # This is not a valid statement. Error!

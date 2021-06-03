@@ -1,10 +1,9 @@
 # Compute average of given values.
 
 LET a = 0
-WHILE a < 1 REPEAT
-  PRINT "Enter number of scores: "
-  INPUT a
-ENDWHILE
+PRINT "Enter number of scores: "
+INPUT a
+
 
 LET b = 0
 LET s = 0
