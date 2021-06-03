@@ -240,7 +240,7 @@ class Parser:
             self.nextToken()
         else:
             # Error!
-            self.abort("Unexpected token at: " + self.curToken.text)
+            self.abort("Unexpected token at " + self.curToken.text)
 
     # nl ::= '\n'+
     def nl(self):
