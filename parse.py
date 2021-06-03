@@ -127,14 +127,15 @@ class Parser:
                 self.abort("Label already exists: " + self.curToken.text)
             self.labelsDeclared.add(self.curToken.text)
 
-            self.emitter.emitLine(self.curToken.text + ":")
+            self.emitter.emitLine("def " + self.curToken.text + "():")
             self.match(TokenType.IDENT)
+            self.emitter.emit("\t")
 
         # "GOTO" ident
         elif self.checkToken(TokenType.GOTO):
             self.nextToken()
             self.labelsGotoed.add(self.curToken.text)
-            self.emitter.emitLine("goto " + self.curToken.text + ";")
+            self.emitter.emitLine(self.curToken.text + "()")
             self.match(TokenType.IDENT)
 
         # "LET" ident = expression
