@@ -21,4 +21,5 @@ def main():
     print("Compiling completed.")
     #exec(open("out.py").read())
 
-main()
+if __name__ == '__main__':
+    main()
