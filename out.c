@@ -23,7 +23,6 @@ scanf("%*s");
 s = s+c;
 b = b+1;
 }
-printf("Average: \n");
 printf("%.2f\n", (float)(s/a));
 return 0;
 }
