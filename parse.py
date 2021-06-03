@@ -159,10 +159,9 @@ class Parser:
             # If variable doesn't already exist, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.emitter.headerLine("float " + self.curToken.text + ";")
 
             # Emit scanf but also validate the input. If invalid, set the variable to 0 and clear the input.
-            self.emitter.emitLine("if(0 == scanf(\"%" + "f\", &" + self.curToken.text + ")) {")
+            self.emitter.emitLine(self.curToken.text + " = input()")
             self.emitter.emitLine(self.curToken.text + " = 0;")
             self.emitter.emit("scanf(\"%")
             self.emitter.emitLine("*s\");")
