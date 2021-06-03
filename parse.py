@@ -48,8 +48,6 @@ class Parser:
 
     # program ::= {statement}
     def program(self):
-        self.emitter.headerLine("#include <stdio.h>")
-        self.emitter.headerLine("int main(void){")
         
         # Since some newlines are required in our grammar, need to skip the excess.
         while self.checkToken(TokenType.NEWLINE):
@@ -58,10 +56,6 @@ class Parser:
         # Parse all the statements in the program.
         while not self.checkToken(TokenType.EOF):
             self.statement()
-
-        # Wrap things up.
-        self.emitter.emitLine("return 0;")
-        self.emitter.emitLine("}")
 
         # Check that each label referenced in a GOTO is declared.
         for label in self.labelsGotoed:
@@ -79,7 +73,7 @@ class Parser:
 
             if self.checkToken(TokenType.STRING):
                 # Simple string, so print it.
-                self.emitter.emitLine("printf(\"" + self.curToken.text + "\\n\");")
+                self.emitter.emitLine("print(\"" + self.curToken.text + "\\n\")")
                 self.nextToken()
 
             else:
@@ -114,14 +108,15 @@ class Parser:
 
             self.match(TokenType.REPEAT)
             self.nl()
-            self.emitter.emitLine("){")
+            self.emitter.emitLine("):")
 
             # Zero or more statements in the loop body.
             while not self.checkToken(TokenType.ENDWHILE):
+                self.emitter.emit("\t")
                 self.statement()
 
             self.match(TokenType.ENDWHILE)
-            self.emitter.emitLine("}")
+            #self.emitter.emitLine("")
 
         # "LABEL" ident
         elif self.checkToken(TokenType.LABEL):
