@@ -161,11 +161,11 @@ class TokenType(enum.Enum):
 	IDENT = 2
 	STRING = 3
 	# Keywords.
-	LABEL = 101
+	DEF = 101
 	GOTO = 102
 	PRINT = 103
 	INPUT = 104
-	LET = 105
+	VAR = 105
 	IF = 106
 	THEN = 107
 	ENDIF = 108
