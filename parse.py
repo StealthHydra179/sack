@@ -1,5 +1,6 @@
 import sys
 from lex import *
+global inExtern
 inExtern = False
 
 # Parser object keeps track of current token, checks if the code matches the grammar, and emits code along the way.
@@ -12,6 +13,8 @@ class Parser:
         self.labelsDeclared = set() # Keep track of all labels declared
         self.labelsGotoed = set() # All labels goto'ed, so we know if they exist or not.
 
+        global inExtern
+        inExtern = False
         self.curToken = None
         self.peekToken = None
         self.nextToken()
@@ -72,7 +75,6 @@ class Parser:
 
     # One of the following statements...
     def statement(self):
-        inExtern = False
         # Check the first token to see what kind of statement this is.
 
         # "PRINT" (expression | string)
@@ -126,15 +128,18 @@ class Parser:
             
         # "EXTERN" Code ENDEXTERN"
         elif self.checkToken(TokenType.EXTERN):
-            return inExtern == True
+            inExtern = True
+            print(inExtern)
             self.nextToken()
 
             # Zero or more statements in the extern body.
             while not self.checkToken(TokenType.ENDEXTERN):
                 self.statement()
+                print(inExtern)
 
             self.match(TokenType.ENDEXTERN)
-            return inExtern == False
+            inExtern = False
+            print(inExtern)
             self.emitter.emitLine("}")
 
         # "LABEL" ident
@@ -190,12 +195,14 @@ class Parser:
             self.match(TokenType.IDENT)
 
         # If we are currently inside an EXTERN, pass code directly to emitter
-        #elif inExtern == True:
-        	#self.emitter.emitLine(self.curToken.text)
+        elif inExtern == True:
+        	self.emitter.emitLine(self.curToken.text)
+        	print(inExtern)
         
         # This is not a valid statement. Error!
         else:
             self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ")")
+            print(inExtern)
 
         # Newline.
         self.nl()
