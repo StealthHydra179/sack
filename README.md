@@ -28,9 +28,9 @@ Example:
 
 Creating a comment with the content `This is a comment`
 
-> <code>
-> #This is a comment
-> </code>
+<code>
+#This is a comment
+</code>
 
 
 <br>
