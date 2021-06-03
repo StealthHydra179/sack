@@ -1,5 +1,6 @@
 import sys
 from lex import *
+inExtern = False
 
 # Parser object keeps track of current token, checks if the code matches the grammar, and emits code along the way.
 class Parser:
@@ -10,7 +11,6 @@ class Parser:
         self.symbols = set()    # All variables we have declared so far.
         self.labelsDeclared = set() # Keep track of all labels declared
         self.labelsGotoed = set() # All labels goto'ed, so we know if they exist or not.
-        self.inExtern = False
 
         self.curToken = None
         self.peekToken = None
@@ -72,6 +72,7 @@ class Parser:
 
     # One of the following statements...
     def statement(self):
+        inExtern = False
         # Check the first token to see what kind of statement this is.
 
         # "PRINT" (expression | string)
@@ -123,17 +124,17 @@ class Parser:
             self.match(TokenType.ENDWHILE)
             self.emitter.emitLine("}")
             
-        # "EXTERN" Code ENDWHILE"
+        # "EXTERN" Code ENDEXTERN"
         elif self.checkToken(TokenType.EXTERN):
             self.nextToken()
-            self.inExtern = True
+            inExtern = True
 
             # Zero or more statements in the extern body.
             while not self.checkToken(TokenType.ENDEXTERN):
                 self.statement()
 
             self.match(TokenType.ENDEXTERN)
-            #self.inExtern = False
+            inExtern = False
             self.emitter.emitLine("}")
 
         # "LABEL" ident
@@ -189,7 +190,7 @@ class Parser:
             self.match(TokenType.IDENT)
 
         # If we are currently inside an EXTERN, pass code directly to emitter
-        elif self.inExtern == True:
+        elif inExtern == True:
         	self.emitter.emitLine(self.curToken.text)
         
         # This is not a valid statement. Error!
