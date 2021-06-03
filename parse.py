@@ -10,6 +10,7 @@ class Parser:
         self.symbols = set()    # All variables we have declared so far.
         self.labelsDeclared = set() # Keep track of all labels declared
         self.labelsGotoed = set() # All labels goto'ed, so we know if they exist or not.
+        self.inExtern = False
 
         self.curToken = None
         self.peekToken = None
@@ -121,6 +122,19 @@ class Parser:
 
             self.match(TokenType.ENDWHILE)
             self.emitter.emitLine("}")
+            
+        # "EXTERN" Code ENDWHILE"
+        elif self.checkToken(TokenType.EXTERN):
+            self.nextToken()
+            self.inExtern = True
+
+            # Zero or more statements in the extern body.
+            while not self.checkToken(TokenType.ENDEXTERN):
+                self.statement()
+
+            self.match(TokenType.ENDEXTERN)
+            #self.inExtern = False
+            self.emitter.emitLine("}")
 
         # "LABEL" ident
         elif self.checkToken(TokenType.LABEL):
@@ -174,6 +188,10 @@ class Parser:
             self.emitter.emitLine("}")
             self.match(TokenType.IDENT)
 
+        # If we are currently inside an EXTERN, pass code directly to emitter
+        elif self.inExtern == True:
+        	self.emitter.emitLine(self.curToken.text)
+        
         # This is not a valid statement. Error!
         else:
             self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ")")
