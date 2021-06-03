@@ -96,14 +96,15 @@ class Parser:
 
             self.match(TokenType.THEN)
             self.nl()
-            self.emitter.emitLine("){")
+            self.emitter.emitLine("):\n\t")
 
             # Zero or more statements in the body.
             while not self.checkToken(TokenType.ENDIF):
                 self.statement()
+                self.emitter.emitLine("\n\t")
 
             self.match(TokenType.ENDIF)
-            self.emitter.emitLine("}")
+            #self.emitter.emitLine("")
 
         # "WHILE" comparison "REPEAT" block "ENDWHILE"
         elif self.checkToken(TokenType.WHILE):
