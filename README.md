@@ -1,7 +1,7 @@
 # sack
 A tiny compiled language, based on BASIC and Lua
 
-[example code](./example.sk)
+[Example Code](./example.sk)
 
 
 # Documentation (WIP)
@@ -15,6 +15,7 @@ Example:
 Creating a variable called `a`
 
 <code>
+
     LET a
 </code>
 
@@ -29,6 +30,7 @@ Example:
 Creating a comment with the content `This is a comment`
 
 <code>
+
     #This is a comment
 </code>
 
@@ -37,6 +39,7 @@ Creating a comment with the content `This is a comment`
 
 ## Example Program
 <code>
+
     # Compute average of given values.
 
     LET a = 0
