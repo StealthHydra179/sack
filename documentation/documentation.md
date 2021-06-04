@@ -10,7 +10,8 @@ Creating a variable called `a`
 
 <code>
 
-    LET a
+    LET a = 0
+    LEt a = "hi"
 </code>
 
 <br>
