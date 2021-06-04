@@ -8,8 +8,8 @@ Example:
 
 Creating a variable called `a`
 
-<code>
 
+<code>
     LET a = 0
     LEt a = "hi"
 </code>
@@ -25,7 +25,6 @@ Example:
 Creating a comment with the content `This is a comment`
 
 <code>
-
     #This is a comment
 </code>
 
@@ -34,7 +33,6 @@ Creating a comment with the content `This is a comment`
 
 ## Example Program
 <code>
-
     # Compute average of given values.
 
     LET a = 0
