@@ -9,10 +9,12 @@ Example:
 Creating a variable called `a`
 
 
-<code>
-    LET a = 0
-    LEt a = "hi"
-</code>
+
+```
+LET a = 0
+
+LET a = "hi"
+```
 
 <br>
 
@@ -24,15 +26,16 @@ Example:
 
 Creating a comment with the content `This is a comment`
 
-<code>
-    #This is a comment
-</code>
+```
+# This is a comment
+```
 
 
 <br>
 
 ## Example Program
-<code>
+The following program will take numbers as input and find the average of them
+```
     # Compute average of given values.
 
     LET a = 0
@@ -51,4 +54,4 @@ Creating a comment with the content `This is a comment`
     ENDWHILE
 
     PRINT s / a
-</code>
+```
