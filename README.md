@@ -24,6 +24,8 @@
     <a href="https://github.com/nobody5050/sack/issues">Report Bug</a>
     •
     <a href="https://github.com/nobody5050/sack/issues">Request Feature</a>
+    •
+    <a href="https://github.com/nobody5050/sack/blob/master/fibonacci.sk">Example Code</a>
   </p>
 </p>
 
