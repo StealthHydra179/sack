@@ -24,11 +24,11 @@ class Lexer:
 
     # Invalid token found, print error message and exit.
     def abort(self, message):
-        sys.exit("Lexing error. " + message)
+        sys.exit(f"Lexing error. {message}")
 		
     # Skip whitespace except newlines, which we will use to indicate the end of a statement.
     def skipWhitespace(self):
-        while self.curChar == ' ' or self.curChar == '\t' or self.curChar == '\r':
+        while self.curChar in [' ', '\t', '\r']:
             self.nextChar()
 		
     # Skip comments in the code.
@@ -87,7 +87,7 @@ class Lexer:
                 self.nextChar()
                 token = Token(lastChar + self.curChar, TokenType.NOTEQ)
             else:
-                self.abort("Expected !=, got !" + self.peek())
+                self.abort(f"Expected !=, got !{self.peek()}")
         elif self.curChar == '\"':
             # Get characters between quotations.
             self.nextChar()
@@ -96,7 +96,7 @@ class Lexer:
             while self.curChar != '\"':
                 # Don't allow special characters in the string. No escape characters, newlines, tabs, or %.
                 # We will be using C's printf on this string.
-                if self.curChar == '\r' or self.curChar == '\n' or self.curChar == '\t' or self.curChar == '\\' or self.curChar == '%':
+                if self.curChar in ['\r', '\n', '\t', '\\', '%']:
                     self.abort("Illegal character in string.")
                 self.nextChar()
 
@@ -130,14 +130,14 @@ class Lexer:
             # Check if the token is in the list of keywords.
             tokText = self.source[startPos : self.curPos + 1] # Get the substring.
             keyword = Token.checkIfKeyword(tokText)
-            if keyword == None: # Identifier
+            if keyword is None: # Identifier
                 token = Token(tokText, TokenType.IDENT)
             else:   # Keyword
                 token = Token(tokText, keyword)
         else:
             # Unknown token!
-            self.abort("Unknown token: " + self.curChar)
-			
+            self.abort(f"Unknown token: {self.curChar}")
+
         self.nextChar()
         return token
 
@@ -148,11 +148,16 @@ class Token:
     
     @staticmethod
     def checkIfKeyword(tokenText):
-        for kind in TokenType:
-            # Relies on all keyword enum values being 1XX.
-            if kind.name == tokenText and kind.value >= 100 and kind.value < 200:
-                return kind
-        return None
+        return next(
+            (
+                kind
+                for kind in TokenType
+                if kind.name == tokenText
+                and kind.value >= 100
+                and kind.value < 200
+            ),
+            None,
+        )
 
 class TokenType(enum.Enum):
 	EOF = -1

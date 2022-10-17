@@ -27,7 +27,7 @@ class Parser:
     # Try to match current token. If not, error. Advances the current token.
     def match(self, kind):
         if not self.checkToken(kind):
-            self.abort("Expected " + kind.name + ", got " + self.curToken.kind.name)
+            self.abort(f"Expected {kind.name}, got {self.curToken.kind.name}")
         self.nextToken()
 
     # Advances the current token.
@@ -41,7 +41,7 @@ class Parser:
         return self.checkToken(TokenType.GT) or self.checkToken(TokenType.GTEQ) or self.checkToken(TokenType.LT) or self.checkToken(TokenType.LTEQ) or self.checkToken(TokenType.EQEQ) or self.checkToken(TokenType.NOTEQ)
 
     def abort(self, message):
-        sys.exit("Error! " + message)
+        sys.exit(f"Error! {message}")
 
 
     # Production rules.
@@ -50,7 +50,7 @@ class Parser:
     def program(self):
         self.emitter.headerLine("#include <stdio.h>")
         self.emitter.headerLine("int main(void){")
-        
+
         # Since some newlines are required in our grammar, need to skip the excess.
         while self.checkToken(TokenType.NEWLINE):
             self.nextToken()
@@ -66,7 +66,7 @@ class Parser:
         # Check that each label referenced in a GOTO is declared.
         for label in self.labelsGotoed:
             if label not in self.labelsDeclared:
-                self.abort("Attempting to GOTO to undeclared label: " + label)
+                self.abort(f"Attempting to GOTO to undeclared label: {label}")
 
 
     # One of the following statements...
@@ -88,7 +88,6 @@ class Parser:
                 self.expression()
                 self.emitter.emitLine("));")
 
-        # "IF" comparison "THEN" block "ENDIF"
         elif self.checkToken(TokenType.IF):
             self.nextToken()
             self.emitter.emit("if(")
@@ -105,7 +104,6 @@ class Parser:
             self.match(TokenType.ENDIF)
             self.emitter.emitLine("}")
 
-        # "WHILE" comparison "REPEAT" block "ENDWHILE"
         elif self.checkToken(TokenType.WHILE):
             self.nextToken()
             self.emitter.emit("while(")
@@ -122,61 +120,59 @@ class Parser:
             self.match(TokenType.ENDWHILE)
             self.emitter.emitLine("}")
 
-        # "LABEL" ident
         elif self.checkToken(TokenType.LABEL):
             self.nextToken()
 
             # Make sure this label doesn't already exist.
             if self.curToken.text in self.labelsDeclared:
-                self.abort("Label already exists: " + self.curToken.text)
+                self.abort(f"Label already exists: {self.curToken.text}")
             self.labelsDeclared.add(self.curToken.text)
 
-            self.emitter.emitLine(self.curToken.text + ":")
+            self.emitter.emitLine(f"{self.curToken.text}:")
             self.match(TokenType.IDENT)
 
-        # "GOTO" ident
         elif self.checkToken(TokenType.GOTO):
             self.nextToken()
             self.labelsGotoed.add(self.curToken.text)
-            self.emitter.emitLine("goto " + self.curToken.text + ";")
+            self.emitter.emitLine(f"goto {self.curToken.text};")
             self.match(TokenType.IDENT)
 
-        # "LET" ident = expression
         elif self.checkToken(TokenType.LET):
             self.nextToken()
 
             #  Check if ident exists in symbol table. If not, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.emitter.headerLine("float " + self.curToken.text + ";")
+                self.emitter.headerLine(f"float {self.curToken.text};")
 
-            self.emitter.emit(self.curToken.text + " = ")
+            self.emitter.emit(f"{self.curToken.text} = ")
             self.match(TokenType.IDENT)
             self.match(TokenType.EQ)
-            
+
             self.expression()
             self.emitter.emitLine(";")
 
-        # "INPUT" ident
         elif self.checkToken(TokenType.INPUT):
             self.nextToken()
 
             # If variable doesn't already exist, declare it.
             if self.curToken.text not in self.symbols:
                 self.symbols.add(self.curToken.text)
-                self.emitter.headerLine("float " + self.curToken.text + ";")
+                self.emitter.headerLine(f"float {self.curToken.text};")
 
             # Emit scanf but also validate the input. If invalid, set the variable to 0 and clear the input.
             self.emitter.emitLine("if(0 == scanf(\"%" + "f\", &" + self.curToken.text + ")) {")
-            self.emitter.emitLine(self.curToken.text + " = 0;")
+            self.emitter.emitLine(f"{self.curToken.text} = 0;")
             self.emitter.emit("scanf(\"%")
             self.emitter.emitLine("*s\");")
             self.emitter.emitLine("}")
             self.match(TokenType.IDENT)
 
-        # This is not a valid statement. Error!
         else:
-            self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ")")
+            self.abort(
+                f"Invalid statement at {self.curToken.text} ({self.curToken.kind.name})"
+            )
+
 
         # Newline.
         self.nl()
@@ -234,13 +230,13 @@ class Parser:
         elif self.checkToken(TokenType.IDENT):
             # Ensure the variable already exists.
             if self.curToken.text not in self.symbols:
-                self.abort("Referencing variable before assignment: " + self.curToken.text)
+                self.abort(f"Referencing variable before assignment: {self.curToken.text}")
 
             self.emitter.emit(self.curToken.text)
             self.nextToken()
         else:
             # Error!
-            self.abort("Unexpected token at " + self.curToken.text)
+            self.abort(f"Unexpected token at {self.curToken.text}")
 
     # nl ::= '\n'+
     def nl(self):
